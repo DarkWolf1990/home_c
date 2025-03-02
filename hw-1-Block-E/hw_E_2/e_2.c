@@ -22,15 +22,15 @@
 
 int main(void){
  int  n=5;
-int numbers[n], min=0;
+ int numbers[n], min=0;
 
-for(int i = 0; i < n; i++) {
- scanf("%d",&numbers[i]);
+ for(int i = 0; i < n; i++) {
+  scanf("%d",&numbers[i]);
 }
  min = numbers[0];
-for (int i = 1; i < n; i++) {
- if (numbers[i] < min){
-  min = numbers[i];
+ for (int i = 1; i < n; i++) {
+  if (numbers[i] < min){
+   min = numbers[i];
 }
  }
  printf("%d",min);
