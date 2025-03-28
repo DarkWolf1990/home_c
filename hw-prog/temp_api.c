@@ -1,15 +1,17 @@
 #include "temp_api.h"
 #include <stdio.h>
+#include <limits.h>
 
 // Функция вывода статистики по каждому месяцу
-void print_monthly_stats(Temperature* temps, int month, int year) {
+void print_monthly_stats(const Temperature* temps, int size, int month, int year) {
     int sum = 0;
-    int min = 100;
-    int max = -100;
+    int min = INT_MAX;
+    int max = INT_MIN;
     int count = 0;
 
-    for (int i = 0; i < 365; i++) {
-        if (temps[i].year == year && temps[i].month[0] == month + '0' && temps[i].month[1] == ' ') {
+    for (int i = 0; i < size; i++) {
+        int current_month = (temps[i].month[0] - '0') * 10 + (temps[i].month[1] - '0');
+        if (temps[i].year == year && current_month == month) {
             sum += temps[i].temperature;
             if (temps[i].temperature < min) {
                 min = temps[i].temperature;
@@ -22,22 +24,24 @@ void print_monthly_stats(Temperature* temps, int month, int year) {
     }
 
     if (count > 0) {
-        printf("Среднемесячная температура: %.2f\n", (float)sum / count);
-        printf("Минимальная температура в текущем месяце: %d\n", min);
-        printf("Максимальная температура в текущем месяце: %d\n", max);
+        printf("=== Статистика за месяц %02d.%d ===\n", month, year);
+        printf("Средняя температура: %.2f\n", (float)sum / count);
+        printf("Минимальная температура: %d\n", min);
+        printf("Максимальная температура: %d\n", max);
+        printf("==============================\n");
     } else {
-        printf("Нет данных за текущий месяц\n");
+        printf("Нет данных за месяц %02d.%d\n", month, year);
     }
 }
 
 // Функция вывода статистики за год
-void print_yearly_stats(Temperature* temps, int year) {
+void print_yearly_stats(const Temperature* temps, int size, int year) {
     int sum = 0;
-    int min = 100;
-    int max = -100;
+    int min = INT_MAX;
+    int max = INT_MIN;
     int count = 0;
 
-    for (int i = 0; i < 365; i++) {
+    for (int i = 0; i < size; i++) {
         if (temps[i].year == year) {
             sum += temps[i].temperature;
             if (temps[i].temperature < min) {
@@ -51,10 +55,12 @@ void print_yearly_stats(Temperature* temps, int year) {
     }
 
     if (count > 0) {
+        printf("=== Статистика за год %d ===\n", year);
         printf("Среднегодовая температура: %.2f\n", (float)sum / count);
         printf("Минимальная температура: %d\n", min);
         printf("Максимальная температура: %d\n", max);
+        printf("=============================\n");
     } else {
-        printf("Нет данных за текущий год\n");
+        printf("Нет данных за год %d\n", year);
     }
 }

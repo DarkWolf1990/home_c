@@ -13,27 +13,32 @@
 #include <stdio.h>
 
 int main() {
-    Temperature temps[365];
 
-    // Инициализация массива температур
-    for (int i = 0; i < 365; i++) {
+    const int DAYS_IN_YEAR = 365;
+    Temperature temps[DAYS_IN_YEAR];
+
+    for (int i = 0; i < DAYS_IN_YEAR; i++) {
         temps[i].year = 2025;
-        temps[i].month[0] = '0' + (i / 30);
-        temps[i].month[1] = ' ';
-        temps[i].day[0] = '0' + (i % 30);
-        temps[i].day[1] = ' ';
-        temps[i].hour[0] = '0' + (i % 24);
-        temps[i].hour[1] = ' ';
-        temps[i].minute[0] = '0' + (i % 60);
-        temps[i].minute[1] = ' ';
+        temps[i].month[0] = '0' + ((i / 30) / 10);
+        temps[i].month[1] = '0' + ((i / 30) % 10);
+        temps[i].month[2] = '\0';
+        temps[i].day[0] = '0' + ((i % 30) / 10);
+        temps[i].day[1] = '0' + ((i % 30) % 10);
+        temps[i].day[2] = '\0';
+        temps[i].hour[0] = '0' + ((i % 24) / 10);
+        temps[i].hour[1] = '0' + ((i % 24) % 10);
+        temps[i].hour[2] = '\0';
+        temps[i].minute[0] = '0' + ((i % 60) / 10);
+        temps[i].minute[1] = '0' + ((i % 60) % 10);
+        temps[i].minute[2] = '\0';
         temps[i].temperature = i % 100 - 50;
     }
 
-    // Вывод статистики за январь
-    print_monthly_stats(temps, 1, 2025);
 
-    // Вывод статистики за год
-    print_yearly_stats(temps, 2025);
+    print_monthly_stats(temps, DAYS_IN_YEAR, 1, 2025);
+
+
+    print_yearly_stats(temps, DAYS_IN_YEAR, 2025);
 
     return 0;
 }
