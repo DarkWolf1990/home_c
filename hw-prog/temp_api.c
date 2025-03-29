@@ -64,3 +64,5 @@ void print_yearly_stats(const Temperature* temps, int size, int year) {
         printf("Нет данных за год %d\n", year);
     }
 }
+
+
