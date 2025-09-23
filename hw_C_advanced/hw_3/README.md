@@ -15,3 +15,17 @@ ____
   
 # ИТОГ:
 ![Изображение](./img/3.png "screenshot3")
+
+# Если собирать проект на macos 
+1. Ставим библиотеку `brew install ncurses`
+2. Добавляем переменные окружения для компиляции 
+3. `export LDFLAGS="-L/opt/homebrew/opt/ncurses/lib"`
+   `export CPPFLAGS="-I/opt/homebrew/opt/ncurses/include"`
+4. Проверяем установлены ли файлы 
+5. `ls /opt/homebrew/opt/ncurses/include/ncurses.h`
+   `ls /opt/homebrew/opt/ncurses/lib/libncurses*`
+6. Далее компилируем 
+`gcc -I/opt/homebrew/opt/ncurses/include -L/opt/homebrew/opt/ncurses/lib -o snake hw_3-game_snake.c -lncurses`
+# ИТОГ:
+![изображение](img/6.png "screenshot6")
+![Изображение](img/5.png "screenshot5")

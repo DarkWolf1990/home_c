@@ -21,7 +21,9 @@
 #include <inttypes.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h> // для toupper()
 
+#define CONTROLS 2
 #define MIN_Y  2  // Минимальная координата по Y, чтобы не писать над инструкцией
 enum {LEFT=1, UP, RIGHT, DOWN, STOP_GAME=KEY_F(10)};
 enum {MAX_TAIL_SIZE=100, START_TAIL_SIZE=3, MAX_FOOD_SIZE=20, FOOD_EXPIRE_SECONDS=10};
@@ -35,7 +37,10 @@ struct control_buttons {
 } control_buttons;
 
 // Стандартные клавиши управления
-struct control_buttons default_controls = {KEY_DOWN, KEY_UP, KEY_LEFT, KEY_RIGHT};
+struct control_buttons default_controls[CONTROLS] = {
+    {KEY_DOWN, KEY_UP, KEY_LEFT, KEY_RIGHT},     // стрелки
+    {'s', 'w', 'a', 'd'}                         // WASD (нижний регистр)
+};
 
 // Структура для одной части хвоста
 typedef struct tail_t {
@@ -80,7 +85,7 @@ void initSnake(snake_t *head, size_t size, int x, int y) {
     initHead(head, x, y);
     head->tail = tail;
     head->tsize = size+1; // начальный хвост
-    head->controls = default_controls;
+    head->controls = default_controls[0];
 }
 
 // Генерация еды в случайной позиции
@@ -130,11 +135,28 @@ void go(snake_t *head) {
 }
 
 // Изменение направления по нажатой клавише
+int playGame() {
+    // инициализация змейки
+    snake_t * snake = (snake_t*)malloc(sizeof(snake_t));
+    initSnake(snake,START_TAIL_SIZE, 10, 10);
+
+    //
+}
+
 void changeDirection(snake_t* snake, const int32_t key){
-    if(key == snake->controls.down) snake->direction = DOWN;
-    else if(key == snake->controls.up) snake->direction = UP;
-    else if(key == snake->controls.right) snake->direction = RIGHT;
-    else if(key == snake->controls.left) snake->direction = LEFT;
+    for (int i = 0; i < CONTROLS; i++) {
+        // Нормализуем символ (если это буква)
+        int norm_key = (isalpha(key) ? tolower(key) : key);
+
+        if (key == default_controls[i].down || norm_key == default_controls[i].down)
+            snake->direction = DOWN;
+        else if (key == default_controls[i].up || norm_key == default_controls[i].up)
+            snake->direction = UP;
+        else if (key == default_controls[i].right || norm_key == default_controls[i].right)
+            snake->direction = RIGHT;
+        else if (key == default_controls[i].left || norm_key == default_controls[i].left)
+            snake->direction = LEFT;
+    }
 }
 
 // Движение хвоста змейки
@@ -214,7 +236,7 @@ int main(){
 
     int key_pressed = 0;
     int game_over = 0;
-
+    timeout(100);
     // ==================== ОСНОВНОЙ ЦИКЛ ИГРЫ ======================
     while (key_pressed != STOP_GAME && !game_over) {
         key_pressed = getch();          // считываем нажатую клавишу
@@ -234,19 +256,18 @@ int main(){
         }
 
         // Задержка через timeout (можно переписать через clock)
-        timeout(100);
     }
 
     // ===================== КОНЕЦ ИГРЫ ==========================
     if (game_over) {
         clear();
         mvprintw(max_y/2, (max_x-9)/2, "Game Over");
-        mvprintw(max_y/2 + 1, (max_x-30)/2, "Press F12 to exit...");
+        mvprintw(max_y/2 + 1, (max_x-30)/2, "Press F10 to exit...");
         refresh();
 
-        // Ждём нажатия F12, чтобы пользователь увидел сообщение
+        // Ждём нажатия F10, чтобы пользователь увидел сообщение
         int ch = 0;
-        while (ch != KEY_F(12)) {
+        while (ch != KEY_F(10)) {
             ch = getch();
         }
     }
